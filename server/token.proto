@@ -1,44 +1,28 @@
 syntax = "proto3";
 
 package server;
-
 option go_package = "server/proto;proto";
 
 service TokenService {
-  rpc Save (SaveRequest) returns (SaveResponse);
-  rpc Clear (ClearRequest) returns (ClearResponse);
-  rpc Check (CheckRequest) returns (CheckResponse);
-  rpc CheckMultiple (CheckMultipleRequest) returns (CheckMultipleResponse); // Новый метод
+    // Метод сохранения с поддержкой club_id
+    rpc Save (SaveRequest) returns (SaveResponse);
+    rpc CheckMultiple (CheckMultipleRequest) returns (CheckMultipleResponse);
 }
 
 message SaveRequest {
-  int64 id = 1;
-  string authToken = 2;
-  string clubId = 3;
+    string id = 1;             // Идентификатор пользователя
+    string club_id = 2;        // Идентификатор клуба
 }
 
 message SaveResponse {
-  string message = 1;
+    string message = 1;
 }
 
-message ClearRequest {}
-
-message ClearResponse {
-  string message = 1;
+message CheckMultipleRequest {
+    repeated string ids = 1;   // Список идентификаторов пользователей
+    string club_id = 2;        // Идентификатор клуба для проверки
 }
 
-message CheckRequest {
-  int64 id = 1;
-}
-
-message CheckResponse {
-  bool exists = 1;
-}
-
-message CheckMultipleRequest { // Запрос для проверки нескольких ID
-  repeated int64 ids = 1; // Массив ID
-}
-
-message CheckMultipleResponse { // Ответ с количеством найденных ID
-  int32 count = 1;
+message CheckMultipleResponse {
+    int32 count = 1;           // Количество совпадений в базе
 }

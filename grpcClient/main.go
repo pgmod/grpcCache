@@ -3,7 +3,6 @@ package grpcClient
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
 	pb "github.com/pgmod/grpcCache/server/proto"
@@ -44,36 +43,17 @@ func (g *GRPCClient) Close() error {
 }
 
 // Save вызывает метод сохранения на сервере.
-func (g *GRPCClient) Save(ctx context.Context, id string, authToken string) (string, error) {
-	_id, _ := strconv.ParseInt(id, 10, 64)
-	resp, err := g.client.Save(ctx, &pb.SaveRequest{Id: _id, AuthToken: authToken})
+func (g *GRPCClient) Save(ctx context.Context, id string, clubId string) (string, error) {
+	resp, err := g.client.Save(ctx, &pb.SaveRequest{Id: id, ClubId: clubId})
 	if err != nil {
 		return "", fmt.Errorf("ошибка сохранения: %v", err)
 	}
 	return resp.Message, nil
 }
 
-// Clear вызывает метод очистки на сервере.
-func (g *GRPCClient) Clear(ctx context.Context) (string, error) {
-	resp, err := g.client.Clear(ctx, &pb.ClearRequest{})
-	if err != nil {
-		return "", fmt.Errorf("ошибка очистки: %v", err)
-	}
-	return resp.Message, nil
-}
-
-// Check вызывает метод проверки на сервере.
-func (g *GRPCClient) Check(ctx context.Context, id int64) (bool, error) {
-	resp, err := g.client.Check(ctx, &pb.CheckRequest{Id: id})
-	if err != nil {
-		return false, fmt.Errorf("ошибка проверки: %v", err)
-	}
-	return resp.Exists, nil
-}
-
 // CheckMultiple вызывает метод проверки нескольких ID на сервере.
-func (g *GRPCClient) CheckMultiple(ctx context.Context, ids []int64) (int32, error) {
-	resp, err := g.client.CheckMultiple(ctx, &pb.CheckMultipleRequest{Ids: ids})
+func (g *GRPCClient) CheckMultiple(ctx context.Context, ids []string, myClubId string) (int32, error) {
+	resp, err := g.client.CheckMultiple(ctx, &pb.CheckMultipleRequest{Ids: ids, ClubId: myClubId})
 	if err != nil {
 		return 0, fmt.Errorf("ошибка проверки нескольких ID: %v", err)
 	}

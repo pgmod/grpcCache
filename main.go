@@ -14,6 +14,10 @@ import (
 
 func StartServer(logLevel int, port string) {
 	log := logger.NewLogger(3, "grpcServer.log", false, "")
+	defer func() {
+		db.CloseDB()
+		log.Info("База данных закрыта")
+	}()
 
 	// Инициализация базы данных
 	if err := db.InitDB(); err != nil {

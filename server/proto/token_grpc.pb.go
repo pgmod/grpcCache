@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.1
-// source: internal/server/token.proto
+// source: server/token.proto
 
 package proto
 
@@ -20,8 +20,6 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	TokenService_Save_FullMethodName          = "/server.TokenService/Save"
-	TokenService_Clear_FullMethodName         = "/server.TokenService/Clear"
-	TokenService_Check_FullMethodName         = "/server.TokenService/Check"
 	TokenService_CheckMultiple_FullMethodName = "/server.TokenService/CheckMultiple"
 )
 
@@ -29,9 +27,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TokenServiceClient interface {
+	// Метод сохранения с поддержкой club_id
 	Save(ctx context.Context, in *SaveRequest, opts ...grpc.CallOption) (*SaveResponse, error)
-	Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error)
-	Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error)
 	CheckMultiple(ctx context.Context, in *CheckMultipleRequest, opts ...grpc.CallOption) (*CheckMultipleResponse, error)
 }
 
@@ -53,26 +50,6 @@ func (c *tokenServiceClient) Save(ctx context.Context, in *SaveRequest, opts ...
 	return out, nil
 }
 
-func (c *tokenServiceClient) Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ClearResponse)
-	err := c.cc.Invoke(ctx, TokenService_Clear_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *tokenServiceClient) Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CheckResponse)
-	err := c.cc.Invoke(ctx, TokenService_Check_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *tokenServiceClient) CheckMultiple(ctx context.Context, in *CheckMultipleRequest, opts ...grpc.CallOption) (*CheckMultipleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CheckMultipleResponse)
@@ -87,9 +64,8 @@ func (c *tokenServiceClient) CheckMultiple(ctx context.Context, in *CheckMultipl
 // All implementations must embed UnimplementedTokenServiceServer
 // for forward compatibility.
 type TokenServiceServer interface {
+	// Метод сохранения с поддержкой club_id
 	Save(context.Context, *SaveRequest) (*SaveResponse, error)
-	Clear(context.Context, *ClearRequest) (*ClearResponse, error)
-	Check(context.Context, *CheckRequest) (*CheckResponse, error)
 	CheckMultiple(context.Context, *CheckMultipleRequest) (*CheckMultipleResponse, error)
 	mustEmbedUnimplementedTokenServiceServer()
 }
@@ -103,12 +79,6 @@ type UnimplementedTokenServiceServer struct{}
 
 func (UnimplementedTokenServiceServer) Save(context.Context, *SaveRequest) (*SaveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
-}
-func (UnimplementedTokenServiceServer) Clear(context.Context, *ClearRequest) (*ClearResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Clear not implemented")
-}
-func (UnimplementedTokenServiceServer) Check(context.Context, *CheckRequest) (*CheckResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
 }
 func (UnimplementedTokenServiceServer) CheckMultiple(context.Context, *CheckMultipleRequest) (*CheckMultipleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckMultiple not implemented")
@@ -152,42 +122,6 @@ func _TokenService_Save_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TokenService_Clear_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ClearRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TokenServiceServer).Clear(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TokenService_Clear_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TokenServiceServer).Clear(ctx, req.(*ClearRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _TokenService_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TokenServiceServer).Check(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TokenService_Check_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TokenServiceServer).Check(ctx, req.(*CheckRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _TokenService_CheckMultiple_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckMultipleRequest)
 	if err := dec(in); err != nil {
@@ -218,18 +152,10 @@ var TokenService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TokenService_Save_Handler,
 		},
 		{
-			MethodName: "Clear",
-			Handler:    _TokenService_Clear_Handler,
-		},
-		{
-			MethodName: "Check",
-			Handler:    _TokenService_Check_Handler,
-		},
-		{
 			MethodName: "CheckMultiple",
 			Handler:    _TokenService_CheckMultiple_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "internal/server/token.proto",
+	Metadata: "server/token.proto",
 }

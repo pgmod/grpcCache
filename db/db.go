@@ -1,10 +1,11 @@
+// db/db.go
 package db
 
 import (
 	"database/sql"
 	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite" // Используем чистый Go SQLite
 )
 
 var DB *sql.DB
@@ -17,17 +18,17 @@ func InitDB() error {
 	}
 
 	var err error
-	DB, err = sql.Open("sqlite3", dbPath)
+	DB, err = sql.Open("sqlite", dbPath) // Обновили параметр на "sqlite"
 	if err != nil {
 		return err
 	}
 
 	createTableQuery := `
-	CREATE TABLE IF NOT EXISTS tokens (
-		id INTEGER PRIMARY KEY,
-		authToken TEXT
-	);
-	CREATE INDEX IF NOT EXISTS idx_tokens_id ON tokens(id);
+    CREATE TABLE IF NOT EXISTS tokens (
+        id TEXT PRIMARY KEY,
+        club_id TEXT
+    );
+	CREATE INDEX IF NOT EXISTS idx_tokens_id ON tokens (id);
 	`
 	_, err = DB.Exec(createTableQuery)
 	if err != nil {
