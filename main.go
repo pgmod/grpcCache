@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/pgmod/grpcCache/db"
+	client "github.com/pgmod/grpcCache/grpcClient"
 	"github.com/pgmod/grpcCache/server"
 	"github.com/pgmod/logger"
 	"google.golang.org/grpc"
@@ -49,4 +50,9 @@ func StartServer(logLevel int, port string) {
 
 	log.Info("Выключение сервера...")
 	grpcServer.GracefulStop()
+}
+func CreateClient(address string) client.GRPCClient {
+	grpcClient := client.GRPCClient{}
+	grpcClient.Connect(address)
+	return grpcClient
 }
