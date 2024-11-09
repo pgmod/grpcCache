@@ -14,11 +14,11 @@ RUN go mod download
 COPY . .
 
 # Собираем проект
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o server .
+RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o сserver .
 # Создаём финальный минималистичный образ
 FROM scratch
 
-COPY --from=builder /app/server /server
+COPY --from=builder /app/сserver /server
 
 
 # Определяем команду по умолчанию
