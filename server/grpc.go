@@ -24,7 +24,7 @@ func RegisterGRPCServer(grpcServer *grpc.Server, log *logger.Logger) {
 
 // Save сохраняет токен в базу данных с идентификатором клуба
 func (s *serverImpl) Save(ctx context.Context, req *pb.SaveRequest) (*pb.SaveResponse, error) {
-	fmt.Println("save ", req.Id, req.ClubId, "with club ID", req.ClubId)
+	s.log.Info("save ", req.Id, req.ClubId, "with club ID", req.ClubId)
 	_, err := db.DB.Exec("INSERT OR REPLACE INTO tokens (id, club_id) VALUES (?, ?)", req.Id, req.ClubId)
 	if err != nil {
 		return nil, err
@@ -32,10 +32,19 @@ func (s *serverImpl) Save(ctx context.Context, req *pb.SaveRequest) (*pb.SaveRes
 
 	return &pb.SaveResponse{Message: "Saved successfully"}, nil
 }
+func (s *serverImpl) Clear(ctx context.Context, req *pb.ClearRequest) (*pb.ClearResponse, error) {
+	s.log.Info("clear ", req.ClubId, "with club ID", req.ClubId)
+	_, err := db.DB.Exec("DELETE FROM tokens WHERE club_id = ?", req.ClubId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ClearResponse{Message: "Cleared successfully"}, nil
+}
 
 // CheckMultiple проверяет наличие нескольких id в базе данных, включая проверку по идентификатору клуба
 func (s *serverImpl) CheckMultiple(ctx context.Context, req *pb.CheckMultipleRequest) (*pb.CheckMultipleResponse, error) {
-	fmt.Println("check multiple ", req.Ids, "with club ID", req.ClubId)
+	s.log.Info("check multiple ", req.Ids, "with club ID", req.ClubId)
 	if len(req.Ids) == 0 {
 		return &pb.CheckMultipleResponse{Count: 0}, nil
 	}

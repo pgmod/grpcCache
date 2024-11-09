@@ -59,3 +59,9 @@ func (g *GRPCClient) CheckMultiple(ctx context.Context, ids []string, myClubId s
 	}
 	return resp.Count, nil
 }
+
+func CreateClient(address string) GRPCClient {
+	grpcClient := GRPCClient{}
+	grpcClient.Connect(address)
+	return grpcClient
+}

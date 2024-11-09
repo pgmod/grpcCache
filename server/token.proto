@@ -26,3 +26,10 @@ message CheckMultipleRequest {
 message CheckMultipleResponse {
     int32 count = 1;           // Количество совпадений в базе
 }
+
+message ClearRequest{
+    string club_id = 1;
+}
+message ClearResponse{
+    string message = 1;
+}
