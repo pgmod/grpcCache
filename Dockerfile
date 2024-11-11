@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # Собираем проект
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o сserver .
+RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o сserver ./cmd/
 # Создаём финальный минималистичный образ
 FROM scratch
 
