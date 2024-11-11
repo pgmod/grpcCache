@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	TokenService_Save_FullMethodName          = "/server.TokenService/Save"
 	TokenService_CheckMultiple_FullMethodName = "/server.TokenService/CheckMultiple"
+	TokenService_Clear_FullMethodName         = "/server.TokenService/Clear"
 )
 
 // TokenServiceClient is the client API for TokenService service.
@@ -30,6 +31,7 @@ type TokenServiceClient interface {
 	// Метод сохранения с поддержкой club_id
 	Save(ctx context.Context, in *SaveRequest, opts ...grpc.CallOption) (*SaveResponse, error)
 	CheckMultiple(ctx context.Context, in *CheckMultipleRequest, opts ...grpc.CallOption) (*CheckMultipleResponse, error)
+	Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error)
 }
 
 type tokenServiceClient struct {
@@ -60,6 +62,16 @@ func (c *tokenServiceClient) CheckMultiple(ctx context.Context, in *CheckMultipl
 	return out, nil
 }
 
+func (c *tokenServiceClient) Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClearResponse)
+	err := c.cc.Invoke(ctx, TokenService_Clear_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TokenServiceServer is the server API for TokenService service.
 // All implementations must embed UnimplementedTokenServiceServer
 // for forward compatibility.
@@ -67,6 +79,7 @@ type TokenServiceServer interface {
 	// Метод сохранения с поддержкой club_id
 	Save(context.Context, *SaveRequest) (*SaveResponse, error)
 	CheckMultiple(context.Context, *CheckMultipleRequest) (*CheckMultipleResponse, error)
+	Clear(context.Context, *ClearRequest) (*ClearResponse, error)
 	mustEmbedUnimplementedTokenServiceServer()
 }
 
@@ -82,6 +95,9 @@ func (UnimplementedTokenServiceServer) Save(context.Context, *SaveRequest) (*Sav
 }
 func (UnimplementedTokenServiceServer) CheckMultiple(context.Context, *CheckMultipleRequest) (*CheckMultipleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckMultiple not implemented")
+}
+func (UnimplementedTokenServiceServer) Clear(context.Context, *ClearRequest) (*ClearResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Clear not implemented")
 }
 func (UnimplementedTokenServiceServer) mustEmbedUnimplementedTokenServiceServer() {}
 func (UnimplementedTokenServiceServer) testEmbeddedByValue()                      {}
@@ -140,6 +156,24 @@ func _TokenService_CheckMultiple_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TokenService_Clear_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TokenServiceServer).Clear(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TokenService_Clear_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TokenServiceServer).Clear(ctx, req.(*ClearRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TokenService_ServiceDesc is the grpc.ServiceDesc for TokenService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -154,6 +188,10 @@ var TokenService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckMultiple",
 			Handler:    _TokenService_CheckMultiple_Handler,
+		},
+		{
+			MethodName: "Clear",
+			Handler:    _TokenService_Clear_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

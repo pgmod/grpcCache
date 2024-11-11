@@ -50,6 +50,13 @@ func (g *GRPCClient) Save(ctx context.Context, id string, clubId string) (string
 	}
 	return resp.Message, nil
 }
+func (g *GRPCClient) Clear(ctx context.Context, clubId string) (string, error) {
+	resp, err := g.client.Clear(ctx, &pb.ClearRequest{ClubId: clubId})
+	if err != nil {
+		return "", fmt.Errorf("ошибка очистки: %v", err)
+	}
+	return resp.Message, nil
+}
 
 // CheckMultiple вызывает метод проверки нескольких ID на сервере.
 func (g *GRPCClient) CheckMultiple(ctx context.Context, ids []string, myClubId string) (int32, error) {

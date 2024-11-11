@@ -7,6 +7,7 @@ service TokenService {
     // Метод сохранения с поддержкой club_id
     rpc Save (SaveRequest) returns (SaveResponse);
     rpc CheckMultiple (CheckMultipleRequest) returns (CheckMultipleResponse);
+    rpc Clear (ClearRequest) returns (ClearResponse);
 }
 
 message SaveRequest {

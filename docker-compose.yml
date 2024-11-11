@@ -1,5 +1,5 @@
 services:
-  socks:
+  grpc:
     logging:
       driver: "json-file"
       options:
