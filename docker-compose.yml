@@ -16,4 +16,5 @@ services:
 networks:
   grpccache_network:
     external: true
+    driver: overlay
     attachable: true
