@@ -16,3 +16,4 @@ services:
 networks:
   grpccache_network:
     external: true
+    attachable: true
