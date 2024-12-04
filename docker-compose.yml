@@ -15,6 +15,5 @@ services:
         - grpccache_network  # Указана только внешняя сеть
 networks:
   grpccache_network:
-    external: true
     driver: overlay
     attachable: true
