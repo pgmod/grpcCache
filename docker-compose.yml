@@ -11,6 +11,8 @@ services:
       - "50051:50051"
     command: ["/server"]
     restart: always  # Перезапускать контейнер в случае падения
+    networks:
+        - grpccache_network  # Указана только внешняя сеть
 networks:
   grpccache_network:
     external: true
