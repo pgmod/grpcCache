@@ -34,7 +34,7 @@ func StartServer(logLevel int, port string) {
 	RegisterGRPCServer(grpcServer, log)
 
 	go func() {
-		log.Info("Запуск gRPC сервера на порту", port)
+		log.Info("Запуск gRPC сервера на порту ", port)
 		if err := grpcServer.Serve(grpcListener); err != nil {
 			log.Error("Ошибка gRPC сервера:", err)
 			os.Exit(1)

@@ -43,8 +43,8 @@ func (g *GRPCClient) Close() error {
 }
 
 // Save вызывает метод сохранения на сервере.
-func (g *GRPCClient) Save(ctx context.Context, id string, clubId string) (string, error) {
-	resp, err := g.client.Save(ctx, &pb.SaveRequest{Id: id, ClubId: clubId})
+func (g *GRPCClient) Save(ctx context.Context, id string, clubId string, extraInfo string) (string, error) {
+	resp, err := g.client.Save(ctx, &pb.SaveRequest{Id: id, ClubId: clubId, ExtraInfo: extraInfo})
 	if err != nil {
 		return "", fmt.Errorf("ошибка сохранения: %v", err)
 	}

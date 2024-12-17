@@ -26,7 +26,8 @@ func InitDB() error {
 	createTableQuery := `
     CREATE TABLE IF NOT EXISTS tokens (
         id TEXT PRIMARY KEY,
-        club_id TEXT
+        club_id TEXT,
+		extra_info TEXT
     );
 	CREATE INDEX IF NOT EXISTS idx_tokens_id ON tokens (id);
 	`

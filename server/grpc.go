@@ -25,21 +25,26 @@ func RegisterGRPCServer(grpcServer *grpc.Server, log *logger.Logger) {
 // Save сохраняет токен в базу данных с идентификатором клуба
 func (s *serverImpl) Save(ctx context.Context, req *pb.SaveRequest) (*pb.SaveResponse, error) {
 	s.log.Info("save ", req.Id, req.ClubId, "with club ID", req.ClubId)
-	_, err := db.DB.Exec("INSERT OR REPLACE INTO tokens (id, club_id) VALUES (?, ?)", req.Id, req.ClubId)
+	_, err := db.DB.Exec("INSERT OR REPLACE INTO tokens (id, club_id, extra_info) VALUES (?, ?, ?)", req.Id, req.ClubId, req.ExtraInfo)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.SaveResponse{Message: "Saved successfully"}, nil
 }
+
 func (s *serverImpl) Clear(ctx context.Context, req *pb.ClearRequest) (*pb.ClearResponse, error) {
-	s.log.Info("clear ", req.ClubId, "with club ID", req.ClubId)
-	_, err := db.DB.Exec("DELETE FROM tokens WHERE club_id = ?", req.ClubId)
+	s.log.Info("clear ", req.ClubId, " with club ID ", req.ClubId)
+
+	// Обновляем поле club_id, добавляя префикс old_
+	_, err := db.DB.Exec("UPDATE tokens SET club_id = ? WHERE club_id = ?", "old_"+req.ClubId, req.ClubId)
 	if err != nil {
+		s.log.Error("failed to update club_id", err)
 		return nil, err
 	}
 
-	return &pb.ClearResponse{Message: "Cleared successfully"}, nil
+	// Возвращаем сообщение об успешном обновлении
+	return &pb.ClearResponse{Message: "Club ID updated successfully"}, nil
 }
 
 // CheckMultiple проверяет наличие нескольких id в базе данных, включая проверку по идентификатору клуба
